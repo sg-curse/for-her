@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>For Aurora 🌌</title>
+  <title>For Shaikin 🌌</title>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital,wght@1,600;1,700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -13,7 +13,7 @@
       --bg-teal: #0c2b3a;
       --accent-cyan: #22d3ee;
       --accent-teal: #14b8a6;
-      --card-bg: rgba(13, 37, 51, 0.9);
+      --card-bg: rgba(13, 37, 51, 0.94);
       --card-border: #1e4e63;
       --text-main: #e2f4f8;
       --text-muted: #8cb8c9;
@@ -24,9 +24,12 @@
       margin: 0;
       padding: 0;
       font-family: 'Nunito', sans-serif;
-      user-select: none;
-      -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      touch-action: manipulation;
+      cursor: pointer;
     }
 
     body {
@@ -64,7 +67,7 @@
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(12px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1, h2, h3 {
@@ -81,11 +84,10 @@
       border-radius: 50px;
       font-size: 1rem;
       font-weight: 700;
-      cursor: pointer;
       box-shadow: 0 8px 20px rgba(20, 184, 166, 0.35);
       margin-top: 18px;
       display: inline-block;
-      transition: transform 0.18s ease;
+      transition: transform 0.15s ease;
     }
 
     .btn:active {
@@ -105,18 +107,19 @@
       height: 18px;
       border-radius: 50%;
       border: 2px solid var(--accent-cyan);
-      transition: all 0.2s;
+      background: transparent;
+      transition: all 0.2s ease;
     }
 
     .pin-dot.filled {
       background: var(--accent-cyan);
-      box-shadow: 0 0 10px var(--accent-cyan);
+      box-shadow: 0 0 12px var(--accent-cyan);
     }
 
     .pin-dot.error {
       border-color: #f43f5e;
       background: #f43f5e;
-      box-shadow: 0 0 10px #f43f5e;
+      box-shadow: 0 0 12px #f43f5e;
     }
 
     .shake {
@@ -138,19 +141,19 @@
     }
 
     .key-btn {
-      background: rgba(22, 60, 80, 0.6);
+      background: rgba(22, 60, 80, 0.7);
       border: 1.5px solid var(--card-border);
       color: var(--text-main);
       font-size: 1.5rem;
       font-weight: 700;
       border-radius: 18px;
       padding: 14px 0;
-      cursor: pointer;
-      transition: background 0.15s;
+      transition: background 0.15s, transform 0.1s;
     }
 
     .key-btn:active {
       background: var(--accent-teal);
+      transform: scale(0.93);
       color: #fff;
     }
 
@@ -178,6 +181,7 @@
       cursor: pointer;
       position: relative;
       background: rgba(14, 165, 233, 0.08);
+      touch-action: none;
     }
 
     .scan-oval.scanning {
@@ -286,11 +290,10 @@
       border-radius: 50px;
       font-size: 1.05rem;
       font-weight: 800;
-      cursor: pointer;
       box-shadow: 0 10px 25px rgba(2, 132, 199, 0.5);
     }
 
-    /* Stage 5: Cake & Candles */
+    /* Stage 5: Cake */
     .cake-container {
       font-size: 85px;
       line-height: 1;
@@ -396,13 +399,12 @@
       border: 2px solid var(--accent-teal);
       border-radius: 20px;
       padding: 18px 12px;
-      cursor: pointer;
       transition: transform 0.2s, border-color 0.2s;
       box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
 
-    .gift-box:hover {
-      transform: translateY(-5px);
+    .gift-box:active {
+      transform: scale(0.95);
       border-color: var(--accent-cyan);
     }
 
@@ -486,7 +488,7 @@
 </head>
 <body>
 
-  <!-- Background Music Loop -->
+  <!-- Continuous Audio Track -->
   <audio id="bg-audio" loop preload="auto">
     <source src="song.mp3" type="audio/mpeg">
   </audio>
@@ -508,29 +510,29 @@
       <div id="pin-error" style="color: #f43f5e; font-size: 0.85rem; font-weight: 700; min-height: 22px;"></div>
 
       <div class="keypad-grid">
-        <button class="key-btn" onclick="pressPin('1')">1</button>
-        <button class="key-btn" onclick="pressPin('2')">2</button>
-        <button class="key-btn" onclick="pressPin('3')">3</button>
-        <button class="key-btn" onclick="pressPin('4')">4</button>
-        <button class="key-btn" onclick="pressPin('5')">5</button>
-        <button class="key-btn" onclick="pressPin('6')">6</button>
-        <button class="key-btn" onclick="pressPin('7')">7</button>
-        <button class="key-btn" onclick="pressPin('8')">8</button>
-        <button class="key-btn" onclick="pressPin('9')">9</button>
-        <button class="key-btn" onclick="clearPin()">✕</button>
-        <button class="key-btn" onclick="pressPin('0')">0</button>
-        <button class="key-btn" onclick="submitPin()">✓</button>
+        <button type="button" class="key-btn" onclick="pressPin('1')">1</button>
+        <button type="button" class="key-btn" onclick="pressPin('2')">2</button>
+        <button type="button" class="key-btn" onclick="pressPin('3')">3</button>
+        <button type="button" class="key-btn" onclick="pressPin('4')">4</button>
+        <button type="button" class="key-btn" onclick="pressPin('5')">5</button>
+        <button type="button" class="key-btn" onclick="pressPin('6')">6</button>
+        <button type="button" class="key-btn" onclick="pressPin('7')">7</button>
+        <button type="button" class="key-btn" onclick="pressPin('8')">8</button>
+        <button type="button" class="key-btn" onclick="pressPin('9')">9</button>
+        <button type="button" class="key-btn" onclick="clearPin()">✕</button>
+        <button type="button" class="key-btn" onclick="pressPin('0')">0</button>
+        <button type="button" class="key-btn" onclick="submitPin()">✓</button>
       </div>
     </div>
 
     <!-- Stage 2: Fingerprint Scanner -->
     <div id="screen-fingerprint" class="screen">
       <h2>Identity Verification 🪪</h2>
-      <p style="color: var(--text-muted); margin-top: 4px; font-size: 0.9rem;">Hold thumb on scanner to verify Aurora</p>
+      <p style="color: var(--text-muted); margin-top: 4px; font-size: 0.9rem;">Hold thumb on scanner to verify Shaikin</p>
 
       <div class="scanner-container">
         <div id="scan-oval" class="scan-oval">
-          <span style="opacity: 0.75;">👆</span>
+          <span style="opacity: 0.75; pointer-events: none;">👆</span>
           <div id="cat-licker" class="cat-licker">🐱👅</div>
         </div>
       </div>
@@ -557,7 +559,7 @@
 
         <div class="peek-btn-wrapper">
           <div id="peek-cat" class="peeking-cat-img">🐱🐾</div>
-          <button class="peek-celebrate-btn" onclick="showScreen('screen-cake')">let's celebrate more ✨</button>
+          <button type="button" class="peek-celebrate-btn" onclick="showScreen('screen-cake')">let's celebrate more ✨</button>
         </div>
       </div>
     </div>
@@ -579,7 +581,7 @@
       </div>
 
       <div id="balloon-nav-btn" style="display: none;">
-        <button class="btn" onclick="showScreen('screen-balloons')">Pop the Balloons 🎈 →</button>
+        <button type="button" class="btn" onclick="showScreen('screen-balloons')">Pop the Balloons 🎈 →</button>
       </div>
     </div>
 
@@ -614,7 +616,7 @@
         </div>
 
         <div id="surprise-nav-btn" style="display: none;">
-          <button class="btn" onclick="showScreen('screen-gifts')">See your surprises 🎁 →</button>
+          <button type="button" class="btn" onclick="showScreen('screen-gifts')">See your surprises 🎁 →</button>
         </div>
       </div>
     </div>
@@ -645,7 +647,7 @@
 
       <!-- Finale button appears after all 4 are viewed -->
       <div id="finale-btn-wrap" style="display: none; margin-top: 15px;">
-        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #ef4444);" onclick="showScreen('screen-end')">To the end 🌙 →</button>
+        <button type="button" class="btn" style="background: linear-gradient(135deg, #f59e0b, #ef4444);" onclick="showScreen('screen-end')">To the end 🌙 →</button>
       </div>
     </div>
 
@@ -655,7 +657,7 @@
       <div style="width: 100%; height: 420px; border-radius: 18px; overflow: hidden; margin: 14px 0; border: 2px solid var(--card-border);">
         <iframe src="https://sweet-jelly-55544b.netlify.app/" style="width: 100%; height: 100%; border: none;"></iframe>
       </div>
-      <button class="btn" onclick="showScreen('screen-gifts')">← Back to Surprises</button>
+      <button type="button" class="btn" onclick="showScreen('screen-gifts')">← Back to Surprises</button>
     </div>
 
     <!-- Surprise 2: Animated Writing Note -->
@@ -665,10 +667,7 @@
       <div class="notebook-paper">
         <div id="typewriter-text" class="notebook-content"></div>
       </div>
-      <button class="btn" onclick="showScreen('screen-gifts')">← Back to Surprises</button>
+      <button type="button" class="btn" onclick="showScreen('screen-gifts')">← Back to Surprises</button>
     </div>
 
-    <!-- Surprise 3: Compliments -->
-    <div id="screen-compliments" class="screen">
-      <h2>Little Reminders ✨</h2>
-      <div style="background: rgba(8, 25, 36, 0.8); border: 1px solid var(--card-border); border-radius: 16px; padding: 22px 16px; margin: 15px 0; min-height: 120px; display: flex; align-items: center; 
+    <!-- Surprise 3: Compliments
