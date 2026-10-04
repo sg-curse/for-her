@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>For Shaikin 🌌</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital,wght@1,600;1,700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #050e17;
+      --bg-teal: #08212e;
+      --accent-cyan: #22d3ee;
+      --accent-teal: #14b8a6;
+      --card-bg: rgba(10, 31, 44, 0.94);
+      --card-border: #1a4a5e;
+      --text-main: #e2f4f8;
+      --text-muted: #8cb8c9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Nunito', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      background: radial-gradient(circle at 50% 20%, #0d2838, #03080e 90%);
+      color: var(--text-main);
+    }
+
+    button {
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+
+    /* Screen Base - Full Viewport */
+    .screen {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+      padding: 24px 18px;
+      text-align: center;
+      position: relative;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .screen.active {
+      display: flex;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    h1, h2, h3 {
+      font-family: 'Fredoka', cursive;
+      color: var(--accent-cyan);
+      letter-spacing: 0.5px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(20, 184, 166, 0.4);
+      margin-top: 18px;
+      display: inline-block;
+      transition: transform 0.15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Stage 1: Keypad */
+    .pin-display {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 25px 0 15px;
+    }
+
+    .pin-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--accent-cyan);
+      background: transparent;
+      transition: all 0.2s;
+    }
+
+    .pin-dot.filled {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 12px var(--accent-cyan);
+    }
+
+    .pin-dot.error {
+      border-color: #f43f5e;
+      background: #f43f5e;
+      box-shadow: 0 0 12px #f43f5e;
+    }
+
+    .shake {
+      animation: shakeAnim 0.4s ease;
+    }
+
+    @keyframes shakeAnim {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-12px); }
+      40%, 80% { transform: translateX(12px); }
+    }
+
+    .keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 290px;
+      margin-top: 15px;
+    }
+
+    .key-btn {
+      background: rgba(16, 44, 60, 0.75);
+      border: 1.5px solid var(--card-border);
+      color: var(--text-main);
+      font-size: 1.6rem;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 16px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .key-btn:active {
+      background: var(--accent-teal);
+      transform: scale(0.92);
+      color: #fff;
+    }
+
+    /* Stage 2: Scanner & Real Animated Lick GIF */
+    .scanner-box {
+      position: relative;
+      margin: 40px auto 25px;
+      width: 130px;
+      height: 160px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .scan-oval {
+      width: 110px;
+      height: 150px;
+      border-radius: 55px;
+      border: 3.5px solid var(--accent-cyan);
+      box-shadow: 0 0 25px rgba(34, 211, 238, 0.4), inset 0 0 20px rgba(34, 211, 238, 0.25);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 50px;
+      cursor: pointer;
+      position: relative;
+      background: rgba(14, 165, 233, 0.08);
+      touch-action: none;
+    }
+
+    .scan-oval.scanning {
+      border-color: #38bdf8;
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.8), inset 0 0 30px rgba(56, 189, 248, 0.5);
+    }
+
+    .cat-lick-gif {
+      position: absolute;
+      top: -45px;
+      right: -75px;
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      display: none;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .speech-bubble {
+      background: #e0f2fe;
+      color: #032b43;
+      padding: 12px 20px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      margin-top: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      display: none;
+    }
+
+    /* Stage 3: Love Slider */
+    .slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 88%;
+      max-width: 320px;
+      height: 14px;
+      border-radius: 10px;
+      background: #143144;
+      outline: none;
+      margin: 28px 0;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      border: 3.5px solid #fff;
+      cursor: grab;
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.9);
+    }
+
+    /* Stage 4: Video Full Screen Edge-to-Edge */
+    #screen-video {
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    .fullscreen-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .video-center-hub {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .peeking-cat {
+      width: 115px;
+      height: 115px;
+      object-fit: contain;
+      margin-bottom: -22px;
+      transform: translateY(60px);
+      transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .peeking-cat.peeking {
+      transform: translateY(0);
+    }
+
+    .peek-celebrate-btn {
+      position: relative;
+      z-index: 2;
+      background: linear-gradient(135deg, #0284c7, #0d9488);
+      border: 2px solid #38bdf8;
+      color: #ffffff;
+      padding: 14px 34px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      box-shadow: 0 10px 30px rgba(2, 132, 199, 0.6);
+    }
+
+    /* Stage 5: Illustrated SVG Cake with Attached Flames */
+    .cake-wrapper {
+      position: relative;
+      width: 200px;
+      height: 180px;
+      margin: 30px auto 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .candles-group {
+      position: absolute;
+      top: 15px;
+      display: flex;
+      gap: 32px;
+      z-index: 3;
+    }
+
+    .candle-unit {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .flame-svg {
+      width: 24px;
+      height: 32px;
+      cursor: pointer;
+      animation: flicker 0.25s infinite alternate ease-in-out;
+      transform-origin: bottom center;
+      transition: opacity 0.3s ease;
+    }
+
+    .flame-svg.out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @keyframes flicker {
+      0% { transform: scale(1) rotate(-2deg); }
+      100% { transform: scale(1.15) rotate(2deg); }
+    }
+
+    .candle-stick {
+      width: 10px;
+      height: 38px;
+      background: linear-gradient(to bottom, #f472b6, #e11d48);
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .cake-base {
+      width: 190px;
+      height: 95px;
+      background: #fed7aa;
+      border-radius: 18px 18px 10px 10px;
+      box-shadow: 0 12px 25px rgba(0,0,0,0.5), inset 0 14px #fb7185, inset 0 22px #f43f5e;
+      position: relative;
+      border-bottom: 6px solid #e11d48;
+    }
+
+    /* Stage 5b: Full Screen Balloon Pop Stage */
+    #screen-balloons {
+      background: radial-gradient(circle at 50% 15%, #082846, #020712 90%);
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+      padding: 30px 16px;
+      justify-content: flex-start;
+    }
+
+    .balloons-sky {
+      position: relative;
+      width: 100%;
+      height: 65vh;
+      margin-top: 15px;
+    }
+
+    .balloon-unit {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      animation: gentleBob 3.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes gentleBob {
+      0% { transform: translateY(0) rotate(-2deg); }
+      100% { transform: translateY(-18px) rotate(2deg); }
+    }
+
+    .balloon-circle {
+      width: 75px;
+      height: 92px;
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      position: relative;
+      box-shadow: inset 10px 10px 20px rgba(255,255,255,0.35), inset -8px -8px 15px rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .balloon-circle::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 7px solid inherit;
+    }
+
+    .string {
+      width: 1.5px;
+      height: 45px;
+      background: rgba(255,255,255,0.4);
+      margin-top: 4px;
+    }
+
+    .popped-text {
+      display: none;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fef08a;
+      text-shadow: 0 0 16px rgba(254, 240, 138, 0.9);
+      animation: popTextIn 0.35s ease forwards;
+      white-space: nowrap;
+    }
+
+    @keyframes popTextIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      100% { transform: scale(1.1); opacity: 1; }
+    }
+
+    /* Stage 6: Surprises Hub */
+    .gift-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 340px;
+      margin: 25px 0 15px;
+    }
+
+    .gift-box {
+      background: linear-gradient(145deg, #103347, #071924);
+      border: 2px solid var(--accent-teal);
+      border-radius: 22px;
+      padding: 22px 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+
+    .gift-box:active {
+      transform: scale(0.94);
+      border-color: var(--accent-cyan);
+    }
+
+    .gift-icon { font-size: 46px; display: block; margin-bottom: 6px; }
+    .gift-title { font-size: 0.95rem; font-weight: 800; color: #bae6fd; }
+
+    /* Notebook Paper Container */
+    .notebook-sheet {
+      background: #fdfdfd;
+      background-image: 
+        linear-gradient(90deg, transparent 38px, #7dd3fc 38px, #7dd3fc 40px, transparent 40px),
+        linear-gradient(#dbeafe 1px, transparent 1px);
+      background-size: 100% 100%, 100% 32px;
+      line-height: 32px;
+      padding: 24px 18px 24px 50px;
+      border-radius: 16px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+      text-align: left;
+      margin: 20px 0;
+      width: 100%;
+      max-width: 360px;
+      min-height: 320px;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    .notebook-text {
+      font-family: 'Caveat', cursive;
+      font-size: 1.35rem;
+      color: #0c354d;
+      line-height: 32px;
+    }
+
+    /* Wishing Letter & Envelope Stage */
+    .letter-stage-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      min-height: 280px;
+      margin: 20px 0;
+    }
+
+    .stationery-paper {
+      background: #0d283c;
+      border: 2px solid #236082;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      position: relative;
+      transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .wish-input-area {
+      width: 100%;
+      height: 120px;
+      background: #081d2c;
+      border: 1.5px solid #1f4f6b;
+      border-radius: 12px;
+      color: #fff;
+      padding: 12px;
+      font-size: 1rem;
+      outline: none;
+      resize: none;
+      margin-top: 10px;
+    }
+
+    .letter-folded {
+      transform: scale(0.2) translateY(-80px) rotateX(70deg);
+      opacity: 0;
+    }
+
+    .paper-airplane {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      font-size: 45px;
+      display: none;
+      z-index: 20;
+    }
+
+    @keyframes flyToMoonAnim {
+      0% { transform: translate(-50%, -50%) scale(0.6) rotate(0deg); opacity: 0; }
+      20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1) rotate(-15deg); }
+      100% { transform: translate(140px, -280px) scale(0.15) rotate(45deg); opacity: 0; }
+    }
+
+    .airplane-flying {
+      display: block !important;
+      animation: flyToMoonAnim 2s forwards cubic-bezier(0.25, 1, 0.5, 1);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Element Loop -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="song.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Screen 1: Keypad -->
+  <div id="screen-pin" class="screen active">
+    <h2>Restricted Access 🔐</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">Enter 4-digit security code to proceed</p>
+
+    <div id="pin-display" class="pin-display">
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+    </div>
+
+    <div id="pin-error" style="color: #f43f5e; font-size: 0.9rem; font-weight: 700; min-height: 25px;"></div>
+
+    <div class="keypad-grid">
+      <button type="button" class="key-btn" onclick="pressPin('1')">1</button>
+      <button type="button" class="key-btn" onclick="pressPin('2')">2</button>
+      <button type="button" class="key-btn" onclick="pressPin('3')">3</button>
+      <button type="button" class="key-btn" onclick="pressPin('4')">4</button>
+      <button type="button" class="key-btn" onclick="pressPin('5')">5</button>
+      <button type="button" class="key-btn" onclick="pressPin('6')">6</button>
+      <button type="button" class="key-btn" onclick="pressPin('7')">7</button>
+      <button type="button" class="key-btn" onclick="pressPin('8')">8</button>
+      <button type="button" class="key-btn" onclick="pressPin('9')">9</button>
+      <button type="button" class="key-btn" onclick="clearPin()">✕</button>
+      <button type="button" class="key-btn" onclick="pressPin('0')">0</button>
+      <button type="button" class="key-btn" onclick="submitPin()">✓</button>
+    </div>
+  </div>
+
+  <!-- Screen 2: Fingerprint Scanner & Lick GIF -->
+  <div id="screen-fingerprint" class="screen">
+    <h2>Identity Verification 🪪</h2>
+    <p style="color: var(--text-muted); margin-top: 6px; font-size: 0.95rem;">Hold thumb on scanner to verify Shaikin</p>
+
+    <div class="scanner-box">
+      <div id="scan-oval" class="scan-oval">
+        <span style="opacity: 0.8; pointer-events: none;">👆</span>
+        <!-- Local cat-lick.gif with direct Tenor CDN fallback -->
+        <img id="cat-lick-img" class="cat-lick-gif" src="cat-lick.gif" onerror="this.src='https://media.tenor.com/tPuhsKrk8W0AAAAC/mangadexdiscord-discord-lick.gif'" alt="Cat Lick" />
+      </div>
+    </div>
+
+    <div id="speech-bubble" class="speech-bubble">
+      yums it's really you , let's proceed 💕
+    </div>
+  </div>
+
+  <!-- Screen 3: Slider -->
+  <div id="screen-meter" class="screen">
+    <div id="mascot" style="font-size: 70px; margin-bottom: 8px;">🥺</div>
+    <h2 id="reaction-title" style="padding: 0 10px;">before we proceed, how much do you love me "Shaikin"</h2>
+    <div id="percentage-val" style="font-size: 2.5rem; font-weight: 800; color: var(--accent-cyan); margin: 8px 0;">1%</div>
+
+    <input type="range" id="love-slider" class="slider" min="1" max="100" value="1" step="1">
+    <div id="next-action" style="min-height: 55px;"></div>
+  </div>
+
+  <!-- Screen 4: Fullscreen Looping Video & Peeking GIF -->
+  <div id="screen-video" class="screen">
+    <video id="scrapbook-video" class="fullscreen-video" src="scrapbook.mp4" autoplay loop muted playsinline></video>
+
+    <div class="video-center-hub">
+      <!-- Local cat-peek.gif with direct Tenor CDN fallback -->
+      <img id="peek-cat-img" class="peeking-cat" src="cat-peek.gif" onerror="this.src='https://media.tenor.com/Fw5fVfM5r3wAAAAC/cat.gif'" alt="Peeking Cat" />
+      <button type="button" class="peek-celebrate-btn" onclick="showScreen('screen-cake')">let's celebrate more ✨</button>
+    </div>
+  </div>
+
+  <!-- Screen 5: Cake Cutting & Candle Extinguish -->
+  <div id="screen-cake" class="screen">
+    <h2>Make a Wish! 🎂</h2>
+    <p id="cake-instruction" style="color: var(--text-muted); font-size: 1rem; margin-top: 6px;">
+      Tap all 3 flames directly on the candles to blow them out ✨
+    </p>
+
+    <div class="cake-wrapper">
+      <div class="candles-group">
+        <!-- Candle 1 -->
+        <div class="candle-unit" onclick="blowCandle(1)">
+          <svg id="flame-1" class="flame-svg" viewBox="0 0 24 32">
+            <path d="M12 0 C12 0 4 12 4 20 C4 26.6 7.6 32 12 32 C16.4 32 20 26.6 20 20 C20 12 12 0 12 0 Z" fill="#fbbf24"/>
+            <path d="M12 8 C12 8 7 15 7 21 C7 25 9.2 29 12 29 C14.8 29 17 25 17 21 C17 15 12 8 12 8 Z" fill="#f43f5e"/>
+          </svg>
+          <div class="candle-stick"></div>
+        </div>
+
+        <!-- Candle 2 -->
+        <div class="candle-unit" onclick="blowCandle(2)">
+          <svg id="flame-2" class="flame-svg" viewBox="0 0 24 32">
+            <path d="M12 0 C12 0 4 12 4 20 C4 26.6 7.6 32 12 32 C16.4 32 20 26.6 20 20 C20 12 12 0 12 0 Z" fill="#fbbf24"/>
+            <path d="M12 8 C12 8 7 15 7 21 C7 25 9.2 29 12 29 C14.8 29 17 25 17 21 C17 15 12 8 12 8 Z" fill="#f43f5e"/>
+          </svg>
+          <div class="candle-stick" style="background: linear-gradient(to bottom, #38bdf8, #0284c7);"></div>
+        </div>
+
+        <!-- Candle 3 -->
+        <div class="candle-unit" onclick="blowCandle(3)">
+          <svg id="flame-3" class="flame-svg" viewBox="0 0 24 32">
+            <path d="M12 0 C12 0 4 12 4 20 C4 26.6 7.6 32 12 32 C16.4 32 20 26.6 20 20 C20 12 12 0 12 0 Z" fill="#fbbf24"/>
+            <path d="M12 8 C12 8 7 15 7 21 C7 25 9.2 29 12 29 C14.8 29 17 25 17 21 C17 15 12 8 12 8 Z" fill="#f43f5e"/>
+          </svg>
+          <div class="candle-stick"></div>
+        </div>
+      </div>
+
+      <div class="cake-base"></div>
+    </div>
+
+    <div id="cake-nav-btn" style="display: none; margin-top: 20px;">
+      <button type="button" class="btn" onclick="showScreen('screen-balloons')">Pop the Balloons 🎈 →</button>
+    </div>
+  </div>
+    <!-- Screen 5b: Scattered Floating Balloons in Night Sky -->
+  <div id="screen-balloons" class="screen">
+    <div style="font-size: 22px; color: #fde047; letter-spacing: 10px;">✦ 🌙 ✦ ⋆ ✦</div>
+    <h2>Pop the Balloons</h2>
+    <p style="color: #93c5fd; font-size: 0.95rem; margin-top: 4px;">Touch each balloon to see what's inside 🎈</p>
+
+    <div class="balloons-sky">
+      <!-- Balloon 1 -->
+      <div class="balloon-unit" style="top: 15%; left: 8%;" onclick="popBalloon(this, 'Smart ✨')">
+        <div class="balloon-circle" style="background: radial-gradient(circle at 35% 35%, #fb7185, #e11d48); color: #e11d48;"></div>
+        <div class="string"></div>
+        <span class="popped-text"></span>
+      </div>
+
+      <!-- Balloon 2 -->
+      <div class="balloon-unit" style="top: 40%; left: 32%; animation-delay: 0.8s;" onclick="popBalloon(this, 'Beautiful ❤️')">
+        <div class="balloon-circle" style="background: radial-gradient(circle at 35% 35%, #38bdf8, #0284c7); color: #0284c7;"></div>
+        <div class="string"></div>
+        <span class="popped-text"></span>
+      </div>
+
+      <!-- Balloon 3 -->
+      <div class="balloon-unit" style="top: 8%; right: 12%; animation-delay: 1.4s;" onclick="popBalloon(this, 'Pretty 🫶🏻')">
+        <div class="balloon-circle" style="background: radial-gradient(circle at 35% 35%, #facc15, #ca8a04); color: #ca8a04;"></div>
+        <div class="string"></div>
+        <span class="popped-text"></span>
+      </div>
+
+      <!-- Balloon 4 -->
+      <div class="balloon-unit" style="top: 48%; right: 14%; animation-delay: 2s;" onclick="popBalloon(this, 'Mine 🙈')">
+        <div class="balloon-circle" style="background: radial-gradient(circle at 35% 35%, #c084fc, #9333ea); color: #9333ea;"></div>
+        <div class="string"></div>
+        <span class="popped-text"></span>
+      </div>
+
+      <!-- Balloon 5 -->
+      <div class="balloon-unit" style="top: 28%; left: 58%; animation-delay: 2.6s;" onclick="popBalloon(this, 'Gorgeous 💖')">
+        <div class="balloon-circle" style="background: radial-gradient(circle at 35% 35%, #34d399, #059669); color: #059669;"></div>
+        <div class="string"></div>
+        <span class="popped-text"></span>
+      </div>
+    </div>
+
+    <div id="balloon-nav-btn" style="display: none; margin-top: 10px;">
+      <button type="button" class="btn" onclick="showScreen('screen-gifts')">See your surprises 🎁 →</button>
+    </div>
+  </div>
+
+  <!-- Screen 6: Surprises Hub (4 Gift Boxes) -->
+  <div id="screen-gifts" class="screen">
+    <h2>Your Surprises 🎁</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">Tap each gift box to open it:</p>
+
+    <div class="gift-grid">
+      <div class="gift-box" onclick="openSurprise(1, 'screen-bouquet')">
+        <span class="gift-icon">🎁</span>
+        <span class="gift-title">Bouquet</span>
+      </div>
+      <div class="gift-box" onclick="openSurprise(2, 'screen-letter')">
+        <span class="gift-icon">🎁</span>
+        <span class="gift-title">Special Note</span>
+      </div>
+      <div class="gift-box" onclick="openSurprise(3, 'screen-compliments')">
+        <span class="gift-icon">🎁</span>
+        <span class="gift-title">Compliments</span>
+      </div>
+      <div class="gift-box" onclick="openSurprise(4, 'screen-wishes')">
+        <span class="gift-icon">🎁</span>
+        <span class="gift-title">Wishing Box</span>
+      </div>
+    </div>
+
+    <div id="finale-btn-wrap" style="display: none; margin-top: 15px;">
+      <button type="button" class="btn" style="background: linear-gradient(135deg, #f59e0b, #ef4444);" onclick="showScreen('screen-end')">To the end 🌙 →</button>
+    </div>
+  </div>
+
+  <!-- Surprise 1: Bouquet -->
+  <div id="screen-bouquet" class="screen">
+    <h2>Your Bouquet 🌹</h2>
+    <div style="width: 100%; max-width: 380px; height: 440px; border-radius: 20px; overflow: hidden; margin: 16px 0; border: 2px solid var(--card-border);">
+      <iframe src="https://sweet-jelly-55544b.netlify.app/" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+    <button type="button" class="btn" onclick="showScreen('screen-gifts')">← Back to Surprises</button>
+  </div>
+
+  <!-- Surprise 2: Fixed Handwritten Notebook Note -->
+  <div id="screen-letter" class="screen">
+    <h2>Special Note 🎀</h2>
+    <div style="font-size: 42px; margin-bottom: -10px;">🐱✍️</div>
+    <div class="notebook-sheet">
+      <div id="typewriter-text" class="notebook-text"></div>
+    </div>
+    <button type="button" class="btn" onclick="showScreen('screen-gifts')">← Back to Surprises</button>
+  </div>
+
+  <!-- Surprise 3: Compliments Non-repeating -->
+  <div id="screen-compliments" class="screen">
+    <h2>Little Reminders ✨</h2>
+    <div style="background: rgba(10, 31, 44, 0.85); border: 1.5px solid var(--card-border); border-radius: 20px; padding: 26px 18px; margin: 20px 0; width: 100%; max-width: 360px; min-height: 140px; display: flex; align-items: center; justify-content: center;">
+      <p id="compliment-text" style="font-size: 1.15rem; font-weight: 700; color: #e2f4f8; line-height: 1.5;">
+        Talking to you is consistently the easiest, most comforting part of my day.
+      </p>
+    </div>
+    <div style="display: flex; gap: 12px; justify-content: center;">
+      <button type="button" class="btn" onclick="generateCompliment()">New ✨</button>
+      <button type="button" class="btn" style="background: rgba(14, 165, 233, 0.2); border: 1.5px solid var(--accent-teal);" onclick="showScreen('screen-gifts')">Back to Surprises</button>
+    </div>
+  </div>
+
+  <!-- Surprise 4: Moon Wishing Box with Folding Stationery & Airplane -->
+  <div id="screen-wishes" class="screen">
+    <div style="font-size: 42px; margin-bottom: 5px;">🌙✨</div>
+    <h2>Wishing Box 🌙</h2>
+
+    <div class="letter-stage-wrapper">
+      <div id="wish-stationery" class="stationery-paper">
+        <p style="text-align: left; font-size: 0.95rem; color: #bae6fd;">
+          🐱: Write your birthday wish on this letter... I'll send it straight to the moon!
+        </p>
+        <textarea id="wish-input" class="wish-input-area" placeholder="Dear Universe, my wish is..."></textarea>
+      </div>
+      <div id="paper-plane" class="paper-airplane">✈️</div>
+    </div>
+
+    <button id="send-wish-btn" type="button" class="btn" onclick="sendWish()">Send Wish 🚀</button>
+    <div style="margin-top: 12px;">
+      <button type="button" class="btn" style="background: transparent; border: 1px solid var(--card-border);" onclick="showScreen('screen-gifts')">← Back to Surprises</button>
+    </div>
+  </div>
+
+  <!-- Final Screen -->
+  <div id="screen-end" class="screen">
+    <div style="font-size: 75px; margin-bottom: 12px;">🌌✨</div>
+    <h1 style="color: #fef08a; font-size: 2.1rem; line-height: 1.3;">Many returns of the Day, take care.</h1>
+    <p style="color: var(--text-muted); margin-top: 16px; font-size: 1.15rem;">Always cheering for you 💕</p>
+  </div>
+
+  <!-- Complete Javascript Engine -->
+  <script>
+    const bgAudio = document.getElementById('bg-audio');
+
+    function startMusic() {
+      if (bgAudio && bgAudio.paused) {
+        bgAudio.play().catch(() => {});
+      }
+    }
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.add('active');
+      }
+
+      if (screenId === 'screen-video') {
+        const video = document.getElementById('scrapbook-video');
+        if (video) video.play().catch(() => {});
+        setTimeout(() => {
+          const peekCat = document.getElementById('peek-cat-img');
+          if (peekCat) peekCat.classList.add('peeking');
+        }, 700);
+      }
+    }
+
+    /* Stage 1: Keypad */
+    let currentPin = '';
+    const pinError = document.getElementById('pin-error');
+    const pinDisplay = document.getElementById('pin-display');
+
+    function updateDots() {
+      const dots = document.querySelectorAll('.pin-dot');
+      dots.forEach((dot, index) => {
+        if (index < currentPin.length) {
+          dot.classList.add('filled');
+        } else {
+          dot.classList.remove('filled');
+          dot.classList.remove('error');
+        }
+      });
+    }
+
+    function pressPin(num) {
+      if (currentPin.length < 4) {
+        currentPin += num.toString();
+        updateDots();
+      }
+      if (currentPin.length === 4) {
+        setTimeout(submitPin, 250);
+      }
+    }
+
+    function clearPin() {
+      currentPin = '';
+      updateDots();
+      if (pinError) pinError.innerText = '';
+    }
+
+    function submitPin() {
+      if (currentPin.length === 0) return;
+      const dots = document.querySelectorAll('.pin-dot');
+      dots.forEach(d => d.classList.add('error'));
+      if (pinDisplay) pinDisplay.classList.add('shake');
+      if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
+
+      if (pinError) pinError.innerText = 'Wrong password! Fingerprint verification needed 🥸';
+
+      setTimeout(() => {
+        if (pinDisplay) pinDisplay.classList.remove('shake');
+        clearPin();
+        showScreen('screen-fingerprint');
+      }, 1400);
+    }
+
+    /* Stage 2: Biometric Hold with Lick GIF */
+    const scanOval = document.getElementById('scan-oval');
+    const catLickImg = document.getElementById('cat-lick-img');
+    const bubble = document.getElementById('speech-bubble');
+    let scanTimer = null;
+
+    function handleScanStart(e) {
+      if (e) e.preventDefault();
+      startMusic();
+      if (scanOval) scanOval.classList.add('scanning');
+      if (catLickImg) catLickImg.style.display = 'block';
+      if (navigator.vibrate) navigator.vibrate(40);
+
+      scanTimer = setTimeout(() => {
+        if (bubble) bubble.style.display = 'block';
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        setTimeout(() => {
+          showScreen('screen-meter');
+        }, 1600);
+      }, 1600);
+    }
+
+    function handleScanEnd(e) {
+      if (scanTimer) clearTimeout(scanTimer);
+      if (scanOval) scanOval.classList.remove('scanning');
+      if (catLickImg) catLickImg.style.display = 'none';
+    }
+
+    if (scanOval) {
+      scanOval.addEventListener('mousedown', handleScanStart);
+      scanOval.addEventListener('mouseup', handleScanEnd);
+      scanOval.addEventListener('touchstart', handleScanStart, { passive: false });
+      scanOval.addEventListener('touchend', handleScanEnd);
+    }
+
+    /* Stage 3: Love Slider */
+    const slider = document.getElementById('love-slider');
+    const mascot = document.getElementById('mascot');
+    const title = document.getElementById('reaction-title');
+    const percentVal = document.getElementById('percentage-val');
+    const nextAction = document.getElementById('next-action');
+
+    if (slider) {
+      slider.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value);
+        percentVal.innerText = `${val}%`;
+
+        if (val < 25) {
+          mascot.innerText = '🥺';
+          title.innerText = 'Only that much, Shaikin?';
+          nextAction.innerHTML = '';
+        } else if (val < 60) {
+          mascot.innerText = '😭';
+          title.innerText = 'That hurts...';
+          nextAction.innerHTML = '';
+        } else if (val < 99) {
+          mascot.innerText = '🤨';
+          title.innerText = 'Almost there, keep dragging!';
+          nextAction.innerHTML = '';
+        } else {
+          mascot.innerText = '😻';
+          title.innerText = 'Correct answer! 🎉';
+          nextAction.innerHTML = `<button type="button" class="btn" onclick="showScreen('screen-video')">let's celebrate now →</button>`;
+        }
+      });
+    }
+
+    /* Stage 5: Candle Blow Logic */
+    let extinguished = new Set();
+    function blowCandle(num) {
+      const flame = document.getElementById(`flame-${num}`);
+      if (flame && !flame.classList.contains('out')) {
+        flame.classList.add('out');
+        extinguished.add(num);
+        if (navigator.vibrate) navigator.vibrate(30);
+
+        if (extinguished.size === 3) {
+          document.getElementById('cake-instruction').innerText = "All candles blown! Happy Birthday! 🎉";
+          document.getElementById('cake-nav-btn').style.display = 'block';
+
+          confetti({
+            particleCount: 75,
+            angle: 60,
+            spread: 60,
+            origin: { x: 0, y: 0.95 },
+            colors: ['#22d3ee', '#14b8a6', '#fef08a', '#f43f5e']
+          });
+          confetti({
+            particleCount: 75,
+            angle: 120,
+            spread: 60,
+            origin: { x: 1, y: 0.95 },
+            colors: ['#22d3ee', '#14b8a6', '#fef08a', '#f43f5e']
+          });
+        }
+      }
+    }
+
+    /* Stage 5b: Balloons Pop */
+    let poppedCount = 0;
+    function popBalloon(unit, word) {
+      const circle = unit.querySelector('.balloon-circle');
+      const string = unit.querySelector('.string');
+      const text = unit.querySelector('.popped-text');
+
+      if (circle && circle.style.display !== 'none') {
+        circle.style.display = 'none';
+        if (string) string.style.display = 'none';
+        text.innerText = word;
+        text.style.display = 'block';
+        poppedCount++;
+        if (navigator.vibrate) navigator.vibrate(50);
+
+        confetti({
+          particleCount: 25,
+          spread: 45,
+          origin: {
+            x: unit.getBoundingClientRect().left / window.innerWidth + 0.05,
+            y: unit.getBoundingClientRect().top / window.innerHeight + 0.05
+          },
+          colors: ['#38bdf8', '#fbbf24', '#f472b6']
+        });
+
+        if (poppedCount === 5) {
+          document.getElementById('balloon-nav-btn').style.display = 'block';
+        }
+      }
+    }
+
+    /* Stage 6: Surprises Tracking */
+    const openedTracker = new Set();
+    function openSurprise(num, screenId) {
+      openedTracker.add(num);
+      showScreen(screenId);
+
+      if (num === 2) {
+        startTypewriterNote();
+      }
+
+      if (openedTracker.size === 4) {
+        document.getElementById('finale-btn-wrap').style.display = 'block';
+      }
+    }
+
+    /* Fixed Typewriter with Preserved Spaces */
+    const letterParagraphs = [
+      "You make my life feel more beautiful and meaningful, and I feel so lucky to have you. I love you wholeheartedly, and I can't wait to continue loving you for the rest of my life. 🎀",
+      "You make me smile, you make me feel safe, and you bring so much happiness into my world. I know I tell you this every day, but you truly are the most beautiful person in my eyes. 😘",
+      "Thank you for being you and for filling my heart with so much love. No matter what happens, I will always choose you. 💕"
+    ];
+    let noteWritten = false;
+
+    function startTypewriterNote() {
+      if (noteWritten) return;
+      noteWritten = true;
+      const target = document.getElementById('typewriter-text');
+      target.innerHTML = '';
+      
+      const fullText = letterParagraphs.join('\n\n');
+      let charIdx = 0;
+
+      const timer = setInterval(() => {
+        if (charIdx < fullText.length) {
+          const char = fullText[charIdx];
+          target.textContent += char;
+          charIdx++;
+        } else {
+          clearInterval(timer);
+        }
+      }, 35);
+    }
+
+    /* Compliments */
+    const complimentPool = [
+      "Talking to you is consistently the easiest, most comforting part of my day.",
+      "You have an effortless way of making everything feel calmer and lighter.",
+      "Your smile genuinely lights up everything around you.",
+      "You are so thoughtful in little ways you probably don't even realize.",
+      "My favourite place is wherever you are.",
+      "You're not just beautiful; your heart is the kindest thing about you.",
+      "Every single conversation with you leaves me in a better mood."
+    ];
+    let lastCompIndex = -1;
+
+    function generateCompliment() {
+      let nextIdx;
+      do {
+        nextIdx = Math.floor(Math.random() * complimentPool.length);
+      } while (nextIdx === lastCompIndex);
+      lastCompIndex = nextIdx;
+
+      const compText = document.getElementById('compliment-text');
+      compText.style.opacity = 0;
+      setTimeout(() => {
+        compText.innerText = complimentPool[nextIdx];
+        compText.style.opacity = 1;
+      }, 150);
+    }
+
+    /* Wishing Paper Fold & Moon Launch */
+    function sendWish() {
+      const input = document.getElementById('wish-input');
+      const stationery = document.getElementById('wish-stationery');
+      const plane = document.getElementById('paper-plane');
+      const btn = document.getElementById('send-wish-btn');
+
+      if (!input || input.value.trim() === '') {
+        alert('Please write your heartfelt wish first! ✨');
+        return;
+      }
+
+      btn.disabled = true;
+      stationery.classList.add('letter-folded');
+      if (navigator.vibrate) navigator.vibrate(60);
+
+      setTimeout(() => {
+        plane.classList.add('airplane-flying');
+      }, 400);
+
+      setTimeout(() => {
+        stationery.classList.remove('letter-folded');
+        plane.classList.remove('airplane-flying');
+        input.value = '';
+        input.placeholder = "Your wish is now soaring amongst the stars! 🌙✨";
+        btn.innerText = "Wish Sent to Moon! ✨";
+      }, 2300);
+    }
+  </script>
+</body>
+  </html>
+  
